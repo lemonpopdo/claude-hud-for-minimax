@@ -1,320 +1,169 @@
 # MiniMax Claude HUD
 
-A Claude Code plugin optimized for MiniMax API users — shows context usage, active tools, running agents, todo progress, and MiniMax API quota. Always visible below your input.
+**实时显示你的 MiniMax API 额度消耗** — 5小时滑动窗口 + 7天周额度，终端输入框下方一目了然。
 
-[![License](https://img.shields.io/github/license/lemonpopdo/claude-hud-for-minimax?v=2)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/lemonpopdo/claude-hud-for-minimax)](https://github.com/lemonpopdo/claude-hud-for-minimax/stargazers)
+Claude Code 插件，为 MiniMax API 用户打造。
 
-![Claude HUD in action](claude-hud-preview-5-2.png)
+![HUD Preview](claude-hud-preview-5-2.png)
 
-## Install
+---
 
-Inside a Claude Code instance, run the following commands:
+## 一分钟安装
 
-**Step 1: Add the marketplace**
-```
-/plugin marketplace add lemonpopdo/claude-hud-for-minimax
-```
-
-**Step 2: Install the plugin**
-
-<details>
-<summary><strong>⚠️ Linux users: Click here first</strong></summary>
-
-On Linux, `/tmp` is often a separate filesystem (tmpfs), which causes plugin installation to fail with:
-```
-EXDEV: cross-device link not permitted
-```
-
-**Fix**: Set TMPDIR before installing:
 ```bash
-mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude
-```
+# 1. 添加插件市场
+/plugin marketplace add lemonpopdo/claude-hud-for-minimax
 
-Then run the install command below in that session. This is a [Claude Code platform limitation](https://github.com/anthropics/claude-code/issues/14799).
-
-</details>
-
-```
+# 2. 安装插件
 /plugin install claude-hud-for-minimax
-```
 
-**Step 3: Configure the statusline**
-```
+# 3. 配置（输入 API Key 后一路回车）
 /minimax-hud:setup
 ```
 
-<details>
-<summary><strong>⚠️ Windows users: Click here if setup says no JavaScript runtime was found</strong></summary>
+重启 Claude Code，HUD 就出现了。
 
-If setup says no JavaScript runtime was found on Windows, install one for your shell first. The simplest fallback is Node.js LTS:
-```powershell
-winget install OpenJS.NodeJS.LTS
-```
-Then restart your shell and run `/minimax-hud:setup` again.
+> **Windows 用户** 如果提示找不到 JavaScript 运行时，先运行：
+> ```powershell
+> winget install OpenJS.NodeJS.LTS
+> ```
+> 然后重启终端，再执行上面的命令。
 
-</details>
-
-Done! Restart Claude Code to load the new statusLine config, then the HUD will appear.
-
-On Windows, make that a full Claude Code restart after setup writes the new `statusLine` config.
+> **Linux 用户** 如果遇到 `EXDEV` 错误，设置临时目录后启动：
+> ```bash
+> mkdir -p ~/.cache/tmp && TMPDIR=~/.cache/tmp claude
+> ```
 
 ---
 
-## What is Claude HUD?
+## 你看到的是什么
 
-Claude HUD gives you better insights into what's happening in your Claude Code session.
-
-| What You See | Why It Matters |
-|--------------|----------------|
-| **Project path** | Know which project you're in (configurable 1-3 directory levels) |
-| **Context health** | Know exactly how full your context window is before it's too late |
-| **MiniMax quota** | See your 5h/7d usage at a glance — `████░░ 40% (200/500)` |
-| **Tool activity** | Watch Claude read, edit, and search files as it happens |
-| **Agent tracking** | See which subagents are running and what they're doing |
-| **Todo progress** | Track task completion in real-time |
-
-## What You See
-
-### Default (2 lines)
 ```
-[MiniMax-M2.5] │ my-project git:(main*)
-Context █████░░░░░ 45% │ MiniMax 5h: ████░░░░░░ 40% (200/500) │ 7d: ██████████ 85% (4.2k/5k)
+[MiniMax:M2.5] │ my-project git:(main*)
+Context █████░░░░░ 45% │ MiniMax:M2.5 5h: ████░░░░░░ 40% (200/500, resets 1h) │ 7d: █████████░ 90% (4.5k/5k, resets 3d)
 ```
-- **Line 1** — Model, project path, git branch
-- **Line 2** — Context bar (green → yellow → red), MiniMax quota (5h window + 7d weekly), resets time
 
-### Optional lines (enable via `/minimax-hud:configure`)
+| 显示内容 | 含义 |
+|---------|------|
+| `Context ████░░` | 上下文窗口使用率，绿→黄→红渐变预警 |
+| `MiniMax:M2.5 5h:` | 当前模型（可切换），5小时滑动窗口已用 200/500 |
+| `7d:` | 7天滚动配额，已用 4.5k/5k |
+| `resets 1h` | 距离窗口重置还剩多少时间 |
+
+### 可选显示（默认隐藏，通过 `/minimax-hud:configure` 开启）
+
 ```
-◐ Edit: auth.ts | ✓ Read ×3 | ✓ Grep ×2        ← Tools activity
-◐ explore [haiku]: Finding auth code (2m 15s)    ← Agent status
-▸ Fix authentication bug (2/5)                   ← Todo progress
+◐ Edit: auth.ts | ✓ Read ×3        ← 正在运行的工具
+✓ explore: 查找认证代码 (2m 15s)    ← 子 Agent 状态
+▸ 修复认证 Bug (2/5)                ← Todo 进度
 ```
 
 ---
 
-## How It Works
+## 为什么需要这个插件
 
-MiniMax Claude HUD uses Claude Code's native **statusline API** — no separate window, no tmux required, works in any terminal.
+MiniMax API 没有官方面板查看实时用量。你只能：
 
-```
-Claude Code → stdin JSON → claude-hud → stdout → displayed in your terminal
-           ↘ transcript JSONL (tools, agents, todos)
-```
+- 等 API 返回 `429 Rate Limit Exceeded` 错误才知道额度用完了
+- 登录 MiniMax 平台手动刷新页面
+- 完全凭感觉使用
 
-**Key features:**
-- Native token data from Claude Code (not estimated)
-- Scales with Claude Code's reported context window size, including newer 1M-context sessions
-- Parses the transcript for tool/agent activity
-- Updates every ~300ms
+MiniMax Claude HUD 把这个黑盒变成了 HUD 底部的一行实时数字。
+
+**核心功能：**
+- 实时显示 5h 滑动窗口和 7d 周额度
+- 支持选择要监控的模型（多模型用户）
+- 上下文窗口使用率 + 颜色预警
+- 工具 / Agent / Todo 实时跟踪
+- 原生 token 数据（非估算），随 Claude Code 版本更新
 
 ---
 
-## Configuration
+## 配置
 
-Customize your HUD anytime:
+### 首次配置
 
+```bash
+/minimax-hud:setup
 ```
+向导会引导你输入 API Key，测试 HUD 能否运行。
+
+### 随时自定义
+
+```bash
 /minimax-hud:configure
 ```
+- 选择布局：展开多行 / 单行紧凑
+- 选择预设：Full（全开）/ Essential（工具+Git）/ Minimal（仅核心）
+- 开启/关闭各项功能
+- **新增：选择要显示配额的模型**
 
-The guided flow handles layout and display toggles. Advanced overrides such as
-custom colors and thresholds are preserved there, but you set them by editing the config file directly:
+### 单独更新 API Key
 
-- **First time setup**: Choose a preset (Full/Essential/Minimal), then fine-tune individual elements
-- **Customize anytime**: Toggle items on/off, adjust git display style, switch layouts
-- **Preview before saving**: See exactly how your HUD will look before committing changes
-- **API Key only**: `/minimax-hud:set-apikey` to set or update your MiniMax API Key without reconfiguring the whole HUD
-
-### Presets
-
-| Preset | What's Shown |
-|--------|--------------|
-| **Full** | Everything enabled — tools, agents, todos, git, usage, duration |
-| **Essential** | Activity lines + git status, minimal info clutter |
-| **Minimal** | Core only — just model name and context bar |
-
-After choosing a preset, you can turn individual elements on or off.
-
-### Manual Configuration
-
-Edit `~/.claude/plugins/minimax-claude-hud/config.json` directly for advanced settings such as `colors.*`,
-`pathLevels`, and threshold overrides. Running `/minimax-hud:configure` preserves those manual settings.
-
-### Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `lineLayout` | string | `expanded` | Layout: `expanded` (multi-line) or `compact` (single line) |
-| `pathLevels` | 1-3 | 1 | Directory levels to show in project path |
-| `elementOrder` | string[] | `["project","context","usage","memory","environment","tools","agents","todos"]` | Expanded-mode element order. Omit entries to hide them in expanded mode. |
-| `gitStatus.enabled` | boolean | true | Show git branch in HUD |
-| `gitStatus.showDirty` | boolean | true | Show `*` for uncommitted changes |
-| `gitStatus.showAheadBehind` | boolean | false | Show `↑N ↓N` for ahead/behind remote |
-| `gitStatus.showFileStats` | boolean | false | Show file change counts `!M +A ✘D ?U` |
-| `display.showModel` | boolean | true | Show model name `[Opus]` |
-| `display.showContextBar` | boolean | true | Show visual context bar `████░░░░░░` |
-| `display.contextValue` | `percent` \| `tokens` \| `remaining` \| `both` | `percent` | Context display format (`45%`, `45k/200k`, `55%` remaining, or `45% (45k/200k)`) |
-| `display.showConfigCounts` | boolean | false | Show CLAUDE.md, rules, MCPs, hooks counts |
-| `display.showDuration` | boolean | false | Show session duration `⏱️ 5m` |
-| `display.showSpeed` | boolean | false | Show output token speed `out: 42.1 tok/s` |
-| `display.showUsage` | boolean | true | Show Claude subscriber usage limits when available |
-| `display.usageBarEnabled` | boolean | true | Display usage as visual bar instead of text |
-| `display.sevenDayThreshold` | 0-100 | 80 | Show 7-day usage when >= threshold (0 = always) |
-| `display.showTokenBreakdown` | boolean | true | Show token details at high context (85%+) |
-| `display.showTools` | boolean | false | Show tools activity line |
-| `display.showAgents` | boolean | false | Show agents activity line |
-| `display.showTodos` | boolean | false | Show todos progress line |
-| `display.showSessionName` | boolean | false | Show session slug or custom title from `/rename` |
-| `display.showClaudeCodeVersion` | boolean | false | Show the installed Claude Code version, e.g. `CC v2.1.81` |
-| `display.showMemoryUsage` | boolean | false | Show an approximate system RAM usage line in expanded layout |
-| `display.showMiniMaxQuota` | boolean | true | Show MiniMax 5h/7d quota — requires ANTHROPIC_AUTH_TOKEN |
-| `display.miniMaxQuotaBarEnabled` | boolean | true | Show visual bar for MiniMax quota |
-| `display.miniMaxQuotaShowWeekly` | boolean | true | Show weekly quota alongside 5h window |
-| `colors.context` | color value | `green` | Base color for the context bar and context percentage |
-| `colors.usage` | color value | `brightBlue` | Base color for usage bars and percentages below warning thresholds |
-| `colors.warning` | color value | `yellow` | Warning color for context thresholds and usage warning text |
-| `colors.usageWarning` | color value | `brightMagenta` | Warning color for usage bars and percentages near their threshold |
-| `colors.critical` | color value | `red` | Critical color for limit-reached states and critical thresholds |
-| `colors.model` | color value | `cyan` | Color for the model badge such as `[Opus]` |
-| `colors.project` | color value | `yellow` | Color for the project path |
-| `colors.git` | color value | `magenta` | Color for git wrapper text such as `git:(` and `)` |
-| `colors.gitBranch` | color value | `cyan` | Color for the git branch and branch status text |
-| `colors.label` | color value | `dim` | Color for labels and secondary metadata such as `Context`, `Usage`, counts, and progress text |
-| `colors.custom` | color value | `208` | Color for the optional custom line |
-
-Supported color names: `dim`, `red`, `green`, `yellow`, `magenta`, `cyan`, `brightBlue`, `brightMagenta`. You can also use a 256-color number (`0-255`) or hex (`#rrggbb`).
-
-`display.showMemoryUsage` is fully opt-in and only renders in `expanded` layout. It reports approximate system RAM usage from the local machine, not precise memory pressure inside Claude Code or a specific process. The number may overstate actual pressure because reclaimable OS cache and buffers can still be counted as used memory.
-
-### MiniMax API Quota
-
-MiniMax quota display shows your 5h sliding window and 7-day usage directly in the HUD. Format: `████░░ 40% (200/500)` — **used/total** with a visual progress bar.
-
-**Requirements:**
-- `ANTHROPIC_AUTH_TOKEN` set in `~/.claude/settings.json`
-- MiniMax API key (get one at https://platform.minimaxi.com/)
-- Use `/minimax-hud:set-apikey` to set it quickly, or `/minimax-hud:setup` for the full wizard
-
-**Display format:**
-- `5h:` — 5h sliding window quota, resets when the window resets
-- `7d:` — 7-day rolling quota
-- Numbers shown as **used/total** (e.g. `200/500` means 200 used out of 500)
-
-**Troubleshooting:** If quota doesn't appear:
-1. Verify API key is set: `/minimax-hud:set-apikey`
-2. Check your key at https://platform.minimaxi.com/ has remaining quota
-3. Restart Claude Code after setting the key
-
-### Claude Subscriber Usage Limits
-
-Usage display is **enabled by default** when Claude Code provides subscriber `rate_limits` data on stdin. It shows your rate limit consumption on line 2 alongside the context bar.
-
-Free/weekly-only accounts render the weekly window by itself instead of showing a ghost `5h: --` placeholder.
-
-The 7-day percentage appears when above the `display.sevenDayThreshold` (default 80%):
-
-```
-Context █████░░░░░ 45% │ Usage ██░░░░░░░░ 25% (1h 30m / 5h) | ██████████ 85% (2d / 7d)
+```bash
+/minimax-hud:set-apikey
 ```
 
-To disable, set `display.showUsage` to `false`.
+### 手动配置
 
-**Requirements:**
-- Claude subscription usage data from Claude Code stdin
-- Not available for API-key-only users
-
-**Troubleshooting:** If usage doesn't appear:
-- Ensure you're logged in with a Claude subscriber account (not API key)
-- Check `display.showUsage` is not set to `false` in config
-- API users see no usage display (they have pay-per-token, not rate limits)
-- AWS Bedrock models display `Bedrock` and hide usage limits (usage is managed in AWS)
-- Claude Code may leave `rate_limits` empty until after the first model response in a session
-- Older Claude Code versions that do not emit `rate_limits` will not show subscriber usage
-
-### Example Configuration
+编辑 `~/.claude/plugins/minimax-claude-hud/config.json`：
 
 ```json
 {
   "lineLayout": "expanded",
-  "pathLevels": 2,
-  "elementOrder": ["project", "tools", "context", "usage", "memory", "environment", "agents", "todos"],
-  "gitStatus": {
-    "enabled": true,
-    "showDirty": true,
-    "showAheadBehind": true,
-    "showFileStats": true
-  },
+  "pathLevels": 1,
   "display": {
-    "showTools": true,
-    "showAgents": true,
-    "showTodos": true,
-    "showConfigCounts": true,
-    "showDuration": true,
-    "showMemoryUsage": true
-  },
-  "colors": {
-    "context": "cyan",
-    "usage": "cyan",
-    "warning": "yellow",
-    "usageWarning": "magenta",
-    "critical": "red",
-    "model": "cyan",
-    "project": "yellow",
-    "git": "magenta",
-    "gitBranch": "cyan",
-    "label": "dim",
-    "custom": "#FF6600"
+    "showMiniMaxQuota": true,
+    "miniMaxQuotaBarEnabled": true,
+    "miniMaxQuotaShowWeekly": true,
+    "modelName": null,
+    "showTools": false,
+    "showAgents": false,
+    "showTodos": false
   }
 }
 ```
 
-### Display Examples
-
-**1 level (default):** `[Opus] │ my-project git:(main)`
-
-**2 levels:** `[Opus] │ apps/my-project git:(main)`
-
-**3 levels:** `[Opus] │ dev/apps/my-project git:(main)`
-
-**With dirty indicator:** `[Opus] │ my-project git:(main*)`
-
-**With ahead/behind:** `[Opus] │ my-project git:(main ↑2 ↓1)`
-
-**With file stats:** `[Opus] │ my-project git:(main* !3 +1 ?2)`
-- `!` = modified files, `+` = added/staged, `✘` = deleted, `?` = untracked
-- Counts of 0 are omitted for cleaner display
-
-### Troubleshooting
-
-**Config not applying?**
-- Check for JSON syntax errors: invalid JSON silently falls back to defaults
-- Ensure valid values: `pathLevels` must be 1, 2, or 3; `lineLayout` must be `expanded` or `compact`
-- Delete config and run `/minimax-hud:configure` to regenerate
-
-**Git status missing?**
-- Verify you're in a git repository
-- Check `gitStatus.enabled` is not `false` in config
-
-**Tool/agent/todo lines missing?**
-- These are hidden by default — enable with `showTools`, `showAgents`, `showTodos` in config
-- They also only appear when there's activity to show
-
-**HUD not appearing after setup?**
-- Restart Claude Code so it picks up the new statusLine config
-- On macOS, fully quit Claude Code and run `claude` again in your terminal
+| 配置项 | 默认值 | 说明 |
+|-------|--------|------|
+| `display.showMiniMaxQuota` | `true` | 是否显示 MiniMax 额度 |
+| `display.miniMaxQuotaBarEnabled` | `true` | 显示进度条 |
+| `display.miniMaxQuotaShowWeekly` | `true` | 同时显示7天额度 |
+| `display.modelName` | `null` | `null` = 自动检测，也可指定具体模型名 |
 
 ---
 
-## Requirements
+## 常见问题
 
-- Claude Code v1.0.80+
-- Node.js 18+ or Bun
-- MiniMax API Key (set via `/minimax-hud:set-apikey` or `/minimax-hud:setup`)
+### 额度不显示？
+
+1. 确认 API Key 已设置：`/minimax-hud:set-apikey`
+2. 确认 Key 有剩余额度：https://platform.minimaxi.com/
+3. 重启 Claude Code（设置 Key 后必须重启）
+
+### 怎么获取 API Key？
+
+访问 https://platform.minimaxi.com/，在 API Key 管理页面获取。
+
+### HUD 不出现？
+
+- 完整退出 Claude Code（不只是关闭标签页），然后重新运行 `claude`
+- macOS 用户：确保完全退出后重新打开终端
 
 ---
 
-## Development
+## 技术原理
+
+```
+Claude Code → stdin JSON → claude-hud → stdout → 终端状态栏
+           ↘ transcript.jsonl（工具、Agent、Todo 活动）
+```
+
+利用 Claude Code 原生 `statusline` API，无需 tmux 或独立窗口，所有终端均可使用。每约 300ms 更新一次。
+
+---
+
+## 开发
 
 ```bash
 git clone https://github.com/lemonpopdo/claude-hud-for-minimax
@@ -323,16 +172,10 @@ npm ci && npm run build
 npm test
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT
 
----
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=lemonpopdo/claude-hud-for-minimax&type=Date)](https://star-history.com/#lemonpopdo/claude-hud-for-minimax&Date)
+[![Star History](https://api.star-history.com/svg?repos=lemonpopdo/claude-hud-for-minimax&type=Date)](https://star-history.com/#lemonpopdo/claude-hud-for-minimax&Date)
