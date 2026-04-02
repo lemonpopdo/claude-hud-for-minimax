@@ -1,5 +1,5 @@
 {
-  "name": "minimax-claude-hud",
+  "name": "claude-hud-for-minimax",
   "owner": {
     "name": "lemonpopdo",
     "email": "lemonpopdo@gmail.com"
@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "minimax-claude-hud",
+      "name": "claude-hud-for-minimax",
       "source": "./",
       "description": "Real-time statusline for MiniMax API users — shows context usage, tool activity, and MiniMax quota (5h/7d). Easy API key setup included.",
       "category": "monitoring",
