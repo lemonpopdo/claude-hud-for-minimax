@@ -7,7 +7,7 @@ export type LineLayoutType = 'compact' | 'expanded';
 
 export type AutocompactBufferMode = 'enabled' | 'disabled';
 export type ContextValueMode = 'percent' | 'tokens' | 'remaining' | 'both';
-export type HudElement = 'project' | 'context' | 'usage' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos';
+export type HudElement = 'project' | 'context' | 'usage' | 'memory' | 'environment' | 'tools' | 'agents' | 'todos' | 'minimax';
 export type HudColorName =
   | 'dim'
   | 'red'
@@ -39,6 +39,7 @@ export const DEFAULT_ELEMENT_ORDER: HudElement[] = [
   'project',
   'context',
   'usage',
+  'minimax',
   'memory',
   'environment',
   'tools',
@@ -76,6 +77,9 @@ export interface HudConfig {
     showSessionName: boolean;
     showClaudeCodeVersion: boolean;
     showMemoryUsage: boolean;
+    showMiniMaxQuota: boolean;
+    miniMaxQuotaBarEnabled: boolean;
+    miniMaxQuotaShowWeekly: boolean;
     autocompactBuffer: AutocompactBufferMode;
     usageThreshold: number;
     sevenDayThreshold: number;
@@ -113,6 +117,9 @@ export const DEFAULT_CONFIG: HudConfig = {
     showSessionName: false,
     showClaudeCodeVersion: false,
     showMemoryUsage: false,
+    showMiniMaxQuota: true,
+    miniMaxQuotaBarEnabled: true,
+    miniMaxQuotaShowWeekly: true,
     autocompactBuffer: 'enabled',
     usageThreshold: 0,
     sevenDayThreshold: 80,
@@ -316,6 +323,15 @@ export function mergeConfig(userConfig: Partial<HudConfig>): HudConfig {
     showMemoryUsage: typeof migrated.display?.showMemoryUsage === 'boolean'
       ? migrated.display.showMemoryUsage
       : DEFAULT_CONFIG.display.showMemoryUsage,
+    showMiniMaxQuota: typeof migrated.display?.showMiniMaxQuota === 'boolean'
+      ? migrated.display.showMiniMaxQuota
+      : DEFAULT_CONFIG.display.showMiniMaxQuota,
+    miniMaxQuotaBarEnabled: typeof migrated.display?.miniMaxQuotaBarEnabled === 'boolean'
+      ? migrated.display.miniMaxQuotaBarEnabled
+      : DEFAULT_CONFIG.display.miniMaxQuotaBarEnabled,
+    miniMaxQuotaShowWeekly: typeof migrated.display?.miniMaxQuotaShowWeekly === 'boolean'
+      ? migrated.display.miniMaxQuotaShowWeekly
+      : DEFAULT_CONFIG.display.miniMaxQuotaShowWeekly,
     autocompactBuffer: validateAutocompactBuffer(migrated.display?.autocompactBuffer)
       ? migrated.display.autocompactBuffer
       : DEFAULT_CONFIG.display.autocompactBuffer,
