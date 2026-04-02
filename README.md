@@ -69,6 +69,7 @@ Claude HUD gives you better insights into what's happening in your Claude Code s
 |--------------|----------------|
 | **Project path** | Know which project you're in (configurable 1-3 directory levels) |
 | **Context health** | Know exactly how full your context window is before it's too late |
+| **MiniMax quota** | See your 5h/7d usage at a glance — `████░░ 40% (200/500)` |
 | **Tool activity** | Watch Claude read, edit, and search files as it happens |
 | **Agent tracking** | See which subagents are running and what they're doing |
 | **Todo progress** | Track task completion in real-time |
@@ -77,11 +78,11 @@ Claude HUD gives you better insights into what's happening in your Claude Code s
 
 ### Default (2 lines)
 ```
-[Opus] │ my-project git:(main*)
-Context █████░░░░░ 45% │ Usage ██░░░░░░░░ 25% (1h 30m / 5h)
+[MiniMax-M2.5] │ my-project git:(main*)
+Context █████░░░░░ 45% │ MiniMax 5h: ████░░░░░░ 40% (200/500) │ 7d: ██████████ 85% (4.2k/5k)
 ```
-- **Line 1** — Model, provider/auth label when relevant (for example `Bedrock` or `API`), project path, git branch
-- **Line 2** — Context bar (green → yellow → red) and usage rate limits
+- **Line 1** — Model, project path, git branch
+- **Line 2** — Context bar (green → yellow → red), MiniMax quota (5h window + 7d weekly), resets time
 
 ### Optional lines (enable via `/minimax-hud:configure`)
 ```
@@ -123,6 +124,7 @@ custom colors and thresholds are preserved there, but you set them by editing th
 - **First time setup**: Choose a preset (Full/Essential/Minimal), then fine-tune individual elements
 - **Customize anytime**: Toggle items on/off, adjust git display style, switch layouts
 - **Preview before saving**: See exactly how your HUD will look before committing changes
+- **API Key only**: `/minimax-hud:set-apikey` to set or update your MiniMax API Key without reconfiguring the whole HUD
 
 ### Presets
 
@@ -136,7 +138,7 @@ After choosing a preset, you can turn individual elements on or off.
 
 ### Manual Configuration
 
-Edit `~/.claude/plugins/claude-hud/config.json` directly for advanced settings such as `colors.*`,
+Edit `~/.claude/plugins/minimax-claude-hud/config.json` directly for advanced settings such as `colors.*`,
 `pathLevels`, and threshold overrides. Running `/minimax-hud:configure` preserves those manual settings.
 
 ### Options
@@ -166,6 +168,9 @@ Edit `~/.claude/plugins/claude-hud/config.json` directly for advanced settings s
 | `display.showSessionName` | boolean | false | Show session slug or custom title from `/rename` |
 | `display.showClaudeCodeVersion` | boolean | false | Show the installed Claude Code version, e.g. `CC v2.1.81` |
 | `display.showMemoryUsage` | boolean | false | Show an approximate system RAM usage line in expanded layout |
+| `display.showMiniMaxQuota` | boolean | true | Show MiniMax 5h/7d quota — requires ANTHROPIC_AUTH_TOKEN |
+| `display.miniMaxQuotaBarEnabled` | boolean | true | Show visual bar for MiniMax quota |
+| `display.miniMaxQuotaShowWeekly` | boolean | true | Show weekly quota alongside 5h window |
 | `colors.context` | color value | `green` | Base color for the context bar and context percentage |
 | `colors.usage` | color value | `brightBlue` | Base color for usage bars and percentages below warning thresholds |
 | `colors.warning` | color value | `yellow` | Warning color for context thresholds and usage warning text |
@@ -182,7 +187,26 @@ Supported color names: `dim`, `red`, `green`, `yellow`, `magenta`, `cyan`, `brig
 
 `display.showMemoryUsage` is fully opt-in and only renders in `expanded` layout. It reports approximate system RAM usage from the local machine, not precise memory pressure inside Claude Code or a specific process. The number may overstate actual pressure because reclaimable OS cache and buffers can still be counted as used memory.
 
-### Usage Limits
+### MiniMax API Quota
+
+MiniMax quota display shows your 5h sliding window and 7-day usage directly in the HUD. Format: `████░░ 40% (200/500)` — **used/total** with a visual progress bar.
+
+**Requirements:**
+- `ANTHROPIC_AUTH_TOKEN` set in `~/.claude/settings.json`
+- MiniMax API key (get one at https://platform.minimaxi.com/)
+- Use `/minimax-hud:set-apikey` to set it quickly, or `/minimax-hud:setup` for the full wizard
+
+**Display format:**
+- `5h:` — 5h sliding window quota, resets when the window resets
+- `7d:` — 7-day rolling quota
+- Numbers shown as **used/total** (e.g. `200/500` means 200 used out of 500)
+
+**Troubleshooting:** If quota doesn't appear:
+1. Verify API key is set: `/minimax-hud:set-apikey`
+2. Check your key at https://platform.minimaxi.com/ has remaining quota
+3. Restart Claude Code after setting the key
+
+### Claude Subscriber Usage Limits
 
 Usage display is **enabled by default** when Claude Code provides subscriber `rate_limits` data on stdin. It shows your rate limit consumption on line 2 alongside the context bar.
 
@@ -286,6 +310,7 @@ To disable, set `display.showUsage` to `false`.
 
 - Claude Code v1.0.80+
 - Node.js 18+ or Bun
+- MiniMax API Key (set via `/minimax-hud:set-apikey` or `/minimax-hud:setup`)
 
 ---
 

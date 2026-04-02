@@ -1,20 +1,20 @@
 {
-  "name": "claude-hud",
+  "name": "minimax-claude-hud",
   "owner": {
-    "name": "Jarrod Watts",
-    "email": "jarrodwattsyt@gmail.com"
+    "name": "lemonpopdo",
+    "email": "lemonpopdo@gmail.com"
   },
   "metadata": {
-    "description": "Real-time statusline HUD for Claude Code - context health, tool activity, agent tracking, and todo progress",
+    "description": "Real-time statusline HUD for Claude Code - MiniMax optimized with API quota display",
     "version": "0.0.11"
   },
   "plugins": [
     {
-      "name": "claude-hud",
+      "name": "minimax-claude-hud",
       "source": "./",
-      "description": "Real-time statusline showing context usage, active tools, running agents, and todo progress. Always visible below your input, zero config required.",
+      "description": "Real-time statusline for MiniMax API users — shows context usage, tool activity, and MiniMax quota (5h/7d). Easy API key setup included.",
       "category": "monitoring",
-      "tags": ["hud", "statusline", "monitoring", "context", "tools", "agents", "todos"]
+      "tags": ["hud", "statusline", "monitoring", "context", "tools", "minimax", "api-quota"]
     }
   ]
 }

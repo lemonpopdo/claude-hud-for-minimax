@@ -8,12 +8,12 @@ Real-time statusline for MiniMax API users — shows context usage, active tools
 
 **Step 1: Add the marketplace**
 ```
-/plugin marketplace add lemonpopdo/minimax-claude-hud-for-minimax
+/plugin marketplace add lemonpopdo/claude-hud-for-minimax
 ```
 
 **Step 2: Install the plugin**
 ```
-/plugin install claude-hud
+/plugin install claude-hud-for-minimax
 ```
 
 **Step 3: Configure the statusline**
