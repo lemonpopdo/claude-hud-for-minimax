@@ -1,7 +1,7 @@
 {
-  "name": "claude-hud",
+  "name": "minimax-claude-hud",
   "version": "0.0.11",
-  "description": "Real-time statusline HUD for Claude Code",
+  "description": "MiniMax-optimized real-time statusline HUD for Claude Code",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -21,9 +21,10 @@
   "keywords": [
     "claude-code",
     "statusline",
-    "hud"
+    "hud",
+    "minimax"
   ],
-  "author": "Jarrod Watts",
+  "author": "lemonpopdo",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"

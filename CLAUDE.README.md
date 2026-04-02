@@ -1,6 +1,6 @@
-# Claude HUD
+# MiniMax Claude HUD
 
-Real-time statusline showing context usage, active tools, running agents, and todo progress.
+Real-time statusline for MiniMax API users — shows context usage, active tools, running agents, todo progress, and MiniMax API quota.
 
 ---
 
@@ -8,7 +8,7 @@ Real-time statusline showing context usage, active tools, running agents, and to
 
 **Step 1: Add the marketplace**
 ```
-/plugin marketplace add jarrodwatts/claude-hud
+/plugin marketplace add lemonpopdo/minimax-claude-hud-for-minimax
 ```
 
 **Step 2: Install the plugin**
@@ -18,7 +18,7 @@ Real-time statusline showing context usage, active tools, running agents, and to
 
 **Step 3: Configure the statusline**
 ```
-/claude-hud:setup
+/minimax-hud:setup
 ```
 
 Done. Restart Claude Code to load the new statusLine config, then the HUD will appear.
@@ -44,7 +44,7 @@ If not installed or outdated, direct user to https://claude.ai/code
 
 Run this command in Claude Code:
 ```
-/plugin marketplace add jarrodwatts/claude-hud
+/plugin marketplace add lemonpopdo/minimax-claude-hud-for-minimax
 ```
 
 ### Step 3: Install the Plugin
@@ -58,7 +58,7 @@ Run this command in Claude Code:
 
 Run this command in Claude Code:
 ```
-/claude-hud:setup
+/minimax-hud:setup
 ```
 
 This adds the statusLine configuration to the user's settings.json.
@@ -76,7 +76,7 @@ Ask the user: "Would you like to star the repository to support the project?"
 
 Only if they explicitly agree, run:
 ```bash
-gh repo star jarrodwatts/claude-hud
+gh repo star lemonpopdo/minimax-claude-hud-for-minimax
 ```
 
 Never run this automatically without user consent.
@@ -92,7 +92,7 @@ Technical documentation for agents who need to understand, modify, or debug Clau
 <plugin>
   <name>Claude HUD</name>
   <description>Real-time statusline showing context usage, active tools, running agents, and todo progress. Always visible below your input, zero config required.</description>
-  <repository>github.com/jarrodwatts/claude-hud</repository>
+  <repository>github.com/lemonpopdo/minimax-claude-hud-for-minimax</repository>
   <license>MIT</license>
 </plugin>
 
@@ -166,7 +166,7 @@ Technical documentation for agents who need to understand, modify, or debug Clau
       Searches cwd, ~/.claude/, and project .claude/ directories.
     </file>
     <file name="config.ts" purpose="Load and validate user configuration">
-      Reads config.json from ~/.claude/plugins/claude-hud/.
+      Reads config.json from ~/.claude/plugins/minimax-claude-hud/.
       Validates and merges user settings with defaults.
       Exports HudConfig interface and loadConfig function.
     </file>
@@ -241,14 +241,14 @@ Technical documentation for agents who need to understand, modify, or debug Clau
   <note>The plugin.json contains metadata only. statusLine is NOT a valid plugin.json field.</note>
 
   <statusline_config>
-    The /claude-hud:setup command adds statusLine to ~/.claude/settings.json with an auto-updating command that finds the latest installed version.
+    The /minimax-hud:setup command adds statusLine to ~/.claude/settings.json with an auto-updating command that finds the latest installed version.
     Updates are automatic - no need to re-run setup after updating the plugin.
   </statusline_config>
 </plugin_configuration>
 
 <development>
   <setup>
-    git clone https://github.com/jarrodwatts/claude-hud
+    git clone https://github.com/lemonpopdo/minimax-claude-hud-for-minimax
     cd claude-hud
     npm ci
     npm run build
@@ -293,9 +293,9 @@ Technical documentation for agents who need to understand, modify, or debug Clau
 <troubleshooting>
   <issue name="Statusline not appearing">
     <cause>Plugin not installed or statusLine not configured</cause>
-    <solution>Run: /plugin marketplace add jarrodwatts/claude-hud</solution>
+    <solution>Run: /plugin marketplace add lemonpopdo/minimax-claude-hud-for-minimax</solution>
     <solution>Run: /plugin install claude-hud</solution>
-    <solution>Run: /claude-hud:setup</solution>
+    <solution>Run: /minimax-hud:setup</solution>
     <solution>Ensure Claude Code is v1.0.80 or later</solution>
   </issue>
 

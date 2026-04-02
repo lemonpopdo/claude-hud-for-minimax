@@ -1,17 +1,17 @@
 {
-  "name": "claude-hud",
-  "description": "Real-time statusline HUD for Claude Code - context health, tool activity, agent tracking, and todo progress",
+  "name": "minimax-claude-hud",
+  "description": "Real-time statusline HUD for Claude Code - MiniMax optimized version with API key setup",
   "version": "0.0.11",
   "author": {
-    "name": "Jarrod Watts",
-    "url": "https://github.com/jarrodwatts"
+    "name": "lemonpopdo",
+    "url": "https://github.com/lemonpopdo"
   },
   "commands": [
-    "./commands/setup.md",
-    "./commands/configure.md"
+    "./commands/minimax-hud-setup.md",
+    "./commands/minimax-hud-configure.md"
   ],
-  "homepage": "https://github.com/jarrodwatts/claude-hud",
-  "repository": "https://github.com/jarrodwatts/claude-hud",
+  "homepage": "https://github.com/lemonpopdo/claude-hud-for-minimax",
+  "repository": "https://github.com/lemonpopdo/claude-hud-for-minimax",
   "license": "MIT",
-  "keywords": ["hud", "monitoring", "statusline", "context", "tools", "agents", "todos", "claude-code"]
+  "keywords": ["hud", "monitoring", "statusline", "context", "tools", "agents", "todos", "claude-code", "minimax"]
 }

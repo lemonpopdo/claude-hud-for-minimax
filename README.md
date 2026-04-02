@@ -1,9 +1,9 @@
-# Claude HUD
+# MiniMax Claude HUD
 
-A Claude Code plugin that shows what's happening — context usage, active tools, running agents, and todo progress. Always visible below your input.
+A Claude Code plugin optimized for MiniMax API users — shows context usage, active tools, running agents, todo progress, and MiniMax API quota. Always visible below your input.
 
-[![License](https://img.shields.io/github/license/jarrodwatts/claude-hud?v=2)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/jarrodwatts/claude-hud)](https://github.com/jarrodwatts/claude-hud/stargazers)
+[![License](https://img.shields.io/github/license/lemonpopdo/claude-hud-for-minimax?v=2)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/lemonpopdo/claude-hud-for-minimax)](https://github.com/lemonpopdo/claude-hud-for-minimax/stargazers)
 
 ![Claude HUD in action](claude-hud-preview-5-2.png)
 
@@ -13,7 +13,7 @@ Inside a Claude Code instance, run the following commands:
 
 **Step 1: Add the marketplace**
 ```
-/plugin marketplace add jarrodwatts/claude-hud
+/plugin marketplace add lemonpopdo/claude-hud-for-minimax
 ```
 
 **Step 2: Install the plugin**
@@ -36,12 +36,12 @@ Then run the install command below in that session. This is a [Claude Code platf
 </details>
 
 ```
-/plugin install claude-hud
+/plugin install claude-hud-for-minimax
 ```
 
 **Step 3: Configure the statusline**
 ```
-/claude-hud:setup
+/minimax-hud:setup
 ```
 
 <details>
@@ -51,7 +51,7 @@ If setup says no JavaScript runtime was found on Windows, install one for your s
 ```powershell
 winget install OpenJS.NodeJS.LTS
 ```
-Then restart your shell and run `/claude-hud:setup` again.
+Then restart your shell and run `/minimax-hud:setup` again.
 
 </details>
 
@@ -83,7 +83,7 @@ Context █████░░░░░ 45% │ Usage ██░░░░░░░
 - **Line 1** — Model, provider/auth label when relevant (for example `Bedrock` or `API`), project path, git branch
 - **Line 2** — Context bar (green → yellow → red) and usage rate limits
 
-### Optional lines (enable via `/claude-hud:configure`)
+### Optional lines (enable via `/minimax-hud:configure`)
 ```
 ◐ Edit: auth.ts | ✓ Read ×3 | ✓ Grep ×2        ← Tools activity
 ◐ explore [haiku]: Finding auth code (2m 15s)    ← Agent status
@@ -94,7 +94,7 @@ Context █████░░░░░ 45% │ Usage ██░░░░░░░
 
 ## How It Works
 
-Claude HUD uses Claude Code's native **statusline API** — no separate window, no tmux required, works in any terminal.
+MiniMax Claude HUD uses Claude Code's native **statusline API** — no separate window, no tmux required, works in any terminal.
 
 ```
 Claude Code → stdin JSON → claude-hud → stdout → displayed in your terminal
@@ -114,7 +114,7 @@ Claude Code → stdin JSON → claude-hud → stdout → displayed in your termi
 Customize your HUD anytime:
 
 ```
-/claude-hud:configure
+/minimax-hud:configure
 ```
 
 The guided flow handles layout and display toggles. Advanced overrides such as
@@ -137,7 +137,7 @@ After choosing a preset, you can turn individual elements on or off.
 ### Manual Configuration
 
 Edit `~/.claude/plugins/claude-hud/config.json` directly for advanced settings such as `colors.*`,
-`pathLevels`, and threshold overrides. Running `/claude-hud:configure` preserves those manual settings.
+`pathLevels`, and threshold overrides. Running `/minimax-hud:configure` preserves those manual settings.
 
 ### Options
 
@@ -266,7 +266,7 @@ To disable, set `display.showUsage` to `false`.
 **Config not applying?**
 - Check for JSON syntax errors: invalid JSON silently falls back to defaults
 - Ensure valid values: `pathLevels` must be 1, 2, or 3; `lineLayout` must be `expanded` or `compact`
-- Delete config and run `/claude-hud:configure` to regenerate
+- Delete config and run `/minimax-hud:configure` to regenerate
 
 **Git status missing?**
 - Verify you're in a git repository
@@ -292,8 +292,8 @@ To disable, set `display.showUsage` to `false`.
 ## Development
 
 ```bash
-git clone https://github.com/jarrodwatts/claude-hud
-cd claude-hud
+git clone https://github.com/lemonpopdo/claude-hud-for-minimax
+cd claude-hud-for-minimax
 npm ci && npm run build
 npm test
 ```
@@ -310,4 +310,4 @@ MIT — see [LICENSE](LICENSE)
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jarrodwatts/claude-hud&type=Date)](https://star-history.com/#jarrodwatts/claude-hud&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=lemonpopdo/claude-hud-for-minimax&type=Date)](https://star-history.com/#lemonpopdo/claude-hud-for-minimax&Date)
