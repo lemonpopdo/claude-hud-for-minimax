@@ -80,6 +80,7 @@ export interface HudConfig {
     showMiniMaxQuota: boolean;
     miniMaxQuotaBarEnabled: boolean;
     miniMaxQuotaShowWeekly: boolean;
+    modelName: string | null;
     autocompactBuffer: AutocompactBufferMode;
     usageThreshold: number;
     sevenDayThreshold: number;
@@ -120,6 +121,7 @@ export const DEFAULT_CONFIG: HudConfig = {
     showMiniMaxQuota: true,
     miniMaxQuotaBarEnabled: true,
     miniMaxQuotaShowWeekly: true,
+    modelName: null,
     autocompactBuffer: 'enabled',
     usageThreshold: 0,
     sevenDayThreshold: 80,
@@ -332,6 +334,9 @@ export function mergeConfig(userConfig: Partial<HudConfig>): HudConfig {
     miniMaxQuotaShowWeekly: typeof migrated.display?.miniMaxQuotaShowWeekly === 'boolean'
       ? migrated.display.miniMaxQuotaShowWeekly
       : DEFAULT_CONFIG.display.miniMaxQuotaShowWeekly,
+    modelName: typeof migrated.display?.modelName === 'string'
+      ? migrated.display.modelName
+      : DEFAULT_CONFIG.display.modelName,
     autocompactBuffer: validateAutocompactBuffer(migrated.display?.autocompactBuffer)
       ? migrated.display.autocompactBuffer
       : DEFAULT_CONFIG.display.autocompactBuffer,

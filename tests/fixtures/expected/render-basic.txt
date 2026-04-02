@@ -1,2 +1,6 @@
 [Opus] │ my-project
 Context ███░░░░░░░ 29%
+MiniMax:M* 5h: █████░░░░░ 46% (276/600, resets 1h 9m) | 7d: ███████░░░ 65% (4k/6k, resets 3d 1h)
+◐ Edit: .../authentication.ts | ✓ Read ×1
+✓ explore [haiku]: Finding auth code (<1s)
+▸ Add tests (1/2)

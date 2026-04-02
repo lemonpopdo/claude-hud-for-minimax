@@ -1,7 +1,7 @@
 {
   "name": "claude-hud-for-minimax",
   "description": "Real-time statusline HUD for Claude Code - MiniMax optimized version with API key setup",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "author": {
     "name": "lemonpopdo",
     "url": "https://github.com/lemonpopdo"

@@ -94,6 +94,8 @@ export interface MiniMaxQuotaData {
   weeklyRemaining: number | null;
   weeklyTotal: number | null;
   weeklyResetsAt: Date | null;
+  /** Model name used for this quota (user-selected or auto-detected) */
+  modelName: string;
 }
 
 export interface RenderContext {

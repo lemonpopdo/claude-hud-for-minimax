@@ -1,6 +1,6 @@
 ---
 description: Configure MiniMax Claude HUD display options (layout, presets, display elements) while preserving advanced manual overrides
-allowed-tools: Read, Write, AskUserQuestion
+allowed-tools: Read, Write, AskUserQuestion, Bash
 ---
 
 # Configure MiniMax Claude HUD
@@ -62,6 +62,38 @@ These are always enabled and NOT configurable:
 
 Advanced settings such as `colors.*`, `pathLevels`, `display.usageThreshold`, and
 `display.environmentThreshold` are preserved when saving but are not edited by this guided flow.
+
+---
+
+## Model Selection (All Users)
+
+Fetch available models from the MiniMax API to present as selectable options.
+
+**FIRST**: Read `~/.claude/settings.json` (or `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json` on bash) to get `ANTHROPIC_AUTH_TOKEN`.
+
+**Fetch model list via curl**:
+```bash
+curl -s -L -X GET "https://api.minimaxi.com/v1/api/openplatform/coding_plan/remains" \
+  -H "Authorization: Bearer ${ANTHROPIC_AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --max-time 5
+```
+
+Parse the JSON response. Extract `model_remains[].model_name` into a list.
+
+**If API call fails or returns no models**: Skip model selection question entirely. Do not set `display.modelName`.
+
+**If API returns models**: Present AskUserQuestion:
+- header: "Model"
+- question: "Which model should the HUD display quota for?"
+- multiSelect: false
+- options: One option per model (e.g. "MiniMax-M2.5-highspeed", "MiniMax-M2.8k") + "Auto-detect (use ANTHROPIC_MODEL env var)"
+
+**Store the selected value**:
+- If user picks a specific model → save that model name as `display.modelName`
+- If user picks "Auto-detect" → save `null` (or omit the field, which the merge logic handles as `null`)
+
+**Note**: If the user already has `display.modelName` set in their config, pre-select that option in the question (make it the first/default option so the UI reflects their current choice).
 
 ---
 

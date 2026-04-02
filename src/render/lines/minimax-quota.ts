@@ -19,7 +19,9 @@ export function renderMiniMaxQuotaLine(ctx: RenderContext): string | null {
   const showWeekly = display?.miniMaxQuotaShowWeekly ?? true;
   const barWidth = getAdaptiveBarWidth();
 
-  const mmLabel = label('MiniMax', colors);
+  const modelLabel = quota.modelName
+    ? label(`MiniMax:${quota.modelName.replace('MiniMax-', '')}`, colors)
+    : label('MiniMax', colors);
 
   // Show warning if either window is exhausted
   if (quota.intervalPercent === 100 || (showWeekly && quota.weeklyPercent === 100)) {
@@ -33,7 +35,7 @@ export function renderMiniMaxQuotaLine(ctx: RenderContext): string | null {
       barEnabled,
       barWidth,
     });
-    return `${mmLabel} ${critical(`⚠ Quota exhausted`, colors)} — ${part}`;
+    return `${modelLabel} ${critical(`⚠ Quota exhausted`, colors)} — ${part}`;
   }
 
   const fiveHourPart = formatWindowPart({
@@ -48,7 +50,7 @@ export function renderMiniMaxQuotaLine(ctx: RenderContext): string | null {
   });
 
   if (!showWeekly || quota.weeklyPercent === null) {
-    return `${mmLabel} ${fiveHourPart}`;
+    return `${modelLabel} ${fiveHourPart}`;
   }
 
   const weeklyPart = formatWindowPart({
@@ -62,7 +64,7 @@ export function renderMiniMaxQuotaLine(ctx: RenderContext): string | null {
     barWidth,
   });
 
-  return `${mmLabel} ${fiveHourPart} | ${weeklyPart}`;
+  return `${modelLabel} ${fiveHourPart} | ${weeklyPart}`;
 }
 
 function formatWindowPart({

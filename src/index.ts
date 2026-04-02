@@ -7,7 +7,7 @@ import { loadConfig } from './config.js';
 import { parseExtraCmdArg, runExtraCmd } from './extra-cmd.js';
 import { getClaudeCodeVersion } from './version.js';
 import { getMemoryUsage } from './memory.js';
-import { fetchMiniMaxQuota } from './minimax-api.js';
+import { fetchMiniMaxQuota, fetchMiniMaxModels } from './minimax-api.js';
 import type { RenderContext } from './types.js';
 import { fileURLToPath } from 'node:url';
 import { realpathSync } from 'node:fs';
@@ -24,6 +24,7 @@ export type MainDeps = {
   getClaudeCodeVersion: typeof getClaudeCodeVersion;
   getMemoryUsage: typeof getMemoryUsage;
   fetchMiniMaxQuota: typeof fetchMiniMaxQuota;
+  fetchMiniMaxModels: typeof fetchMiniMaxModels;
   render: typeof render;
   now: () => number;
   log: (...args: unknown[]) => void;
@@ -42,6 +43,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
     getClaudeCodeVersion,
     getMemoryUsage,
     fetchMiniMaxQuota,
+    fetchMiniMaxModels,
     render,
     now: () => Date.now(),
     log: console.log,
@@ -89,7 +91,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       : null;
 
     const miniMaxQuota = config.display.showMiniMaxQuota
-      ? await deps.fetchMiniMaxQuota()
+      ? await deps.fetchMiniMaxQuota(config.display.modelName)
       : null;
 
     const ctx: RenderContext = {
