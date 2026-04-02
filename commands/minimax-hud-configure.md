@@ -9,6 +9,51 @@ allowed-tools: Read, Write, AskUserQuestion
 
 Store current values and note whether config exists (determines which flow to use).
 
+---
+
+## Initial: API Key Check (Applies to All Users)
+
+**FIRST**: Read `~/.claude/settings.json` (or `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json` on bash).
+
+Check if `env.ANTHROPIC_AUTH_TOKEN` is already set.
+
+### If API key is already set:
+Skip this section entirely — proceed to "Always On" below.
+
+### If API key is NOT set:
+
+Use AskUserQuestion:
+- header: "API Key"
+- question: "No API Key found. Configure it now to display your MiniMax quota in the HUD?"
+- multiSelect: false
+- options:
+  - "Skip for now" - Proceed without API Key (MiniMax quota won't show)
+  - "Enter API Key" - Ask user to input their key
+
+**If user chooses "Enter API Key":**
+
+Use AskUserQuestion to get the key value (free text). Validate:
+- Must start with `sk-`
+- Must be at least 20 characters
+
+If invalid, say "Invalid format. It should start with `sk-` and be at least 20 characters." and re-prompt (up to 3 attempts).
+
+**Write to settings.json**: Read current file, merge in:
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "<key>",
+    "ANTHROPIC_BASE_URL": "https://api.minimaxi.com/anthropic",
+    "ANTHROPIC_MODEL": "MiniMax-M2.5-highspeed"
+  }
+}
+```
+Preserve all existing fields. Only update the `env` section.
+
+After writing, say: "API Key saved! You'll need to restart Claude Code for the quota to appear."
+
+---
+
 ## Always On (Core Features)
 
 These are always enabled and NOT configurable:

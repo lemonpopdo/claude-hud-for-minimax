@@ -87,20 +87,20 @@ function formatWindowPart({
   const resetStr = formatResetTime(resetAt);
   const labelStr = `${windowLabel}:`;
   const percentStr = percent !== null ? `${getQuotaColor(percent, colors)}${percent}%${RESET}` : '--%';
-  const remainingStr = remaining !== null ? formatCount(remaining) : '--';
+  const usedStr = (remaining !== null && total !== null) ? formatCount(total - remaining) : '--';
   const totalStr = total !== null ? formatCount(total) : '--';
 
   if (barEnabled) {
     const bar = quotaBar(percent ?? 0, barWidth, colors);
     const body = resetStr
-      ? `${bar} ${percentStr} (${remainingStr}/${totalStr}, resets ${resetStr})`
-      : `${bar} ${percentStr} (${remainingStr}/${totalStr})`;
+      ? `${bar} ${percentStr} (${usedStr}/${totalStr}, resets ${resetStr})`
+      : `${bar} ${percentStr} (${usedStr}/${totalStr})`;
     return `${labelStr} ${body}`;
   }
 
   const body = resetStr
-    ? `${percentStr} (${remainingStr}/${totalStr}, resets ${resetStr})`
-    : `${percentStr} (${remainingStr}/${totalStr})`;
+    ? `${percentStr} (${usedStr}/${totalStr}, resets ${resetStr})`
+    : `${percentStr} (${usedStr}/${totalStr})`;
   return `${labelStr} ${body}`;
 }
 

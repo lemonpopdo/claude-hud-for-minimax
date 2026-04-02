@@ -8,7 +8,8 @@
   },
   "commands": [
     "./commands/minimax-hud-setup.md",
-    "./commands/minimax-hud-configure.md"
+    "./commands/minimax-hud-configure.md",
+    "./commands/set-apikey.md"
   ],
   "homepage": "https://github.com/lemonpopdo/claude-hud-for-minimax",
   "repository": "https://github.com/lemonpopdo/claude-hud-for-minimax",

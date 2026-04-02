@@ -6,6 +6,7 @@ export const DEFAULT_ELEMENT_ORDER = [
     'project',
     'context',
     'usage',
+    'minimax',
     'memory',
     'environment',
     'tools',
@@ -41,6 +42,9 @@ export const DEFAULT_CONFIG = {
         showSessionName: false,
         showClaudeCodeVersion: false,
         showMemoryUsage: false,
+        showMiniMaxQuota: true,
+        miniMaxQuotaBarEnabled: true,
+        miniMaxQuotaShowWeekly: true,
         autocompactBuffer: 'enabled',
         usageThreshold: 0,
         sevenDayThreshold: 80,
@@ -224,6 +228,15 @@ export function mergeConfig(userConfig) {
         showMemoryUsage: typeof migrated.display?.showMemoryUsage === 'boolean'
             ? migrated.display.showMemoryUsage
             : DEFAULT_CONFIG.display.showMemoryUsage,
+        showMiniMaxQuota: typeof migrated.display?.showMiniMaxQuota === 'boolean'
+            ? migrated.display.showMiniMaxQuota
+            : DEFAULT_CONFIG.display.showMiniMaxQuota,
+        miniMaxQuotaBarEnabled: typeof migrated.display?.miniMaxQuotaBarEnabled === 'boolean'
+            ? migrated.display.miniMaxQuotaBarEnabled
+            : DEFAULT_CONFIG.display.miniMaxQuotaBarEnabled,
+        miniMaxQuotaShowWeekly: typeof migrated.display?.miniMaxQuotaShowWeekly === 'boolean'
+            ? migrated.display.miniMaxQuotaShowWeekly
+            : DEFAULT_CONFIG.display.miniMaxQuotaShowWeekly,
         autocompactBuffer: validateAutocompactBuffer(migrated.display?.autocompactBuffer)
             ? migrated.display.autocompactBuffer
             : DEFAULT_CONFIG.display.autocompactBuffer,

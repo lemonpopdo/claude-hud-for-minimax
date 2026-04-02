@@ -71,6 +71,18 @@ export interface TranscriptData {
     sessionStart?: Date;
     sessionName?: string;
 }
+export interface MiniMaxQuotaData {
+    /** 5h sliding window: percentage already used (0-100) */
+    intervalPercent: number | null;
+    intervalRemaining: number | null;
+    intervalTotal: number | null;
+    intervalResetsAt: Date | null;
+    /** Weekly quota: percentage already used (0-100) */
+    weeklyPercent: number | null;
+    weeklyRemaining: number | null;
+    weeklyTotal: number | null;
+    weeklyResetsAt: Date | null;
+}
 export interface RenderContext {
     stdin: StdinData;
     transcript: TranscriptData;
@@ -85,5 +97,6 @@ export interface RenderContext {
     config: HudConfig;
     extraLabel: string | null;
     claudeCodeVersion?: string;
+    miniMaxQuota: MiniMaxQuotaData | null;
 }
 //# sourceMappingURL=types.d.ts.map
